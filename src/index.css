@@ -52,14 +52,11 @@
 
 a {
   font-weight: 400;
-  color: black;
   font-size: 15px;
   font-family: var(--font-roboto);
 }
 
-a:hover {
-  color: #90BE54;
-}
+
 
 li {
   font-family: var(--font-roboto);
@@ -149,4 +146,57 @@ li {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Hide default top-left zoom control if it persists */
+.leaflet-top.leaflet-left .leaflet-control-zoom {
+  display: none !important;
+}
+
+/* Marker Cluster Styles */
+.custom-cluster-marker {
+  background: transparent;
+}
+
+.cluster-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.cluster-icon:hover {
+  transform: scale(1.1);
+}
+
+.cluster-icon span {
+  font-family: var(--font-inter);
+}
+
+.cluster-small {
+  width: 36px;
+  height: 36px;
+  font-size: 13px;
+  background: linear-gradient(135deg, #90BE54 0%, #6a994e 100%);
+  border: 3px solid white;
+}
+
+.cluster-medium {
+  width: 44px;
+  height: 44px;
+  font-size: 14px;
+  background: linear-gradient(135deg, #5faee3 0%, #3d8bc4 100%);
+  border: 3px solid white;
+}
+
+.cluster-large {
+  width: 52px;
+  height: 52px;
+  font-size: 15px;
+  background: linear-gradient(135deg, #e9c46a 0%, #d4a84a 100%);
+  border: 4px solid white;
 }

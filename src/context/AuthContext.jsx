@@ -17,7 +17,8 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         // User is logged in with Firebase
-        const token = await firebaseUser.getIdToken();
+        // Force refresh to get a fresh token (not expired)
+        const token = await firebaseUser.getIdToken(true);
         
         // Sync with backend
         backendLogin(token, {

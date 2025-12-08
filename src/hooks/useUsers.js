@@ -211,7 +211,11 @@ export const useUserManagement = () => {
     },
     handleOpenDeleteModal: (user) => {
       setSelectedUser(user);
-      setUI(prev => ({ ...prev, isDeleteModalOpen: true }));
+      setUI(prev => {
+        // Prevent opening if already open
+        if (prev.isDeleteModalOpen) return prev;
+        return { ...prev, isDeleteModalOpen: true, activeDropdown: null };
+      });
     },
     handleCloseDeleteModal: () => {
       setUI(prev => ({ ...prev, isDeleteModalOpen: false }));
@@ -246,7 +250,13 @@ export const useUserManagement = () => {
     
     // Query data - Handle different API response structures
     // Could be: { data: [...] }, { users: [...] }, or just [...]
-    users: usersQuery.data?.data || usersQuery.data?.users || (Array.isArray(usersQuery.data) ? usersQuery.data : []),
+    // Map API fields to match component expectations: uid -> id, name -> displayName
+    users: (usersQuery.data?.data || usersQuery.data?.users || (Array.isArray(usersQuery.data) ? usersQuery.data : [])).map(user => ({
+      ...user,
+      id: user.uid || user.id,
+      displayName: user.name || user.displayName,
+      status: user.status || 'active' // Default to active if not provided
+    })),
     total: usersQuery.data?.total || usersQuery.data?.totalCount || usersQuery.data?.data?.length || 0,
     totalPages: usersQuery.data?.totalPages || usersQuery.data?.pages || 1,
     isLoading: usersQuery.isLoading,

@@ -31,9 +31,9 @@ function UserTable({
               </td>
             </tr>
           ) : (
-            users.map((user) => (
+            users.map((user, index) => (
               <UserTableRow
-                key={user.id}
+                key={user.id || `user-${index}`}
                 user={user}
                 isDropdownOpen={activeDropdown === user.id}
                 dropdownRef={dropdownRef}

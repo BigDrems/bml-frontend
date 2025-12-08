@@ -29,6 +29,10 @@ const queryClient = new QueryClient({
   },
 });
 
+if (import.meta.env.PROD) {
+  console.log('App started.');
+}
+
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

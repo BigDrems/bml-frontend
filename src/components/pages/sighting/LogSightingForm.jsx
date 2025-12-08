@@ -59,7 +59,6 @@ export const LogSightingForm = () => {
       toast.success("Sighting submitted successfully!");
       navigate('/map'); // Redirect to map or home
     } catch (error) {
-      console.error(error);
       toast.error(error.response?.data?.message || "Failed to submit sighting");
     } finally {
       setIsSubmitting(false);

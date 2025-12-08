@@ -96,7 +96,6 @@ export const getAnalytics = async () => {
       }
     };
   } catch (error) {
-    console.error('Failed to fetch analytics:', error);
     throw error;
   }
 };

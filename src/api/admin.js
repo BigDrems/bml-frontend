@@ -130,7 +130,6 @@ export const getAdminDashboardStats = async () => {
       ]
     };
   } catch (error) {
-    console.error('Failed to fetch admin dashboard stats:', error);
     throw error;
   }
 };

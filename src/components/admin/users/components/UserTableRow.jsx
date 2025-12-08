@@ -45,7 +45,7 @@ function UserTableRow({
       <td className="px-6 py-4 text-sm text-gray-500">
         {new Date(user.createdAt).toLocaleDateString()}
       </td>
-      <td className="px-6 py-4">
+      <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
         <UserActionDropdown
           user={user}
           isOpen={isDropdownOpen}

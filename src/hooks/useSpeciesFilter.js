@@ -40,7 +40,7 @@ export const useSpeciesFilter = (speciesData, speciesTypes = []) => {
         dispatch(setUI(value));
         break;
       default:
-        console.warn(`Unknown filter key: ${key}`);
+        break;
     }
   };
 

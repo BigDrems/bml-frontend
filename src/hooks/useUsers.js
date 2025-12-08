@@ -1,5 +1,5 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSelector, useDispatch } from 'react-redux';
 import { 
   getUsers, 
   getUserById, 
@@ -8,23 +8,6 @@ import {
   updateUserRole, 
   updateUserStatus 
 } from '@/api/users';
-import {
-  selectFilters,
-  selectPagination,
-  selectUI,
-  selectSelectedUser,
-  setSearch,
-  setRoleFilter,
-  setStatusFilter,
-  resetFilters,
-  setPage,
-  toggleDropdown,
-  closeDropdown,
-  openFormModal,
-  closeFormModal,
-  openDeleteModal,
-  closeDeleteModal
-} from '@/store/slices/userManagementSlice';
 
 // Query keys
 export const userKeys = {
@@ -136,18 +119,31 @@ export const useUpdateUserStatus = () => {
 };
 
 /**
- * Combined hook for User Management with Redux state and TanStack Query
+ * Combined hook for User Management with local state and TanStack Query
  * @returns {Object} User management state and actions
  */
 export const useUserManagement = () => {
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   
-  // Redux state
-  const filters = useSelector(selectFilters);
-  const pagination = useSelector(selectPagination);
-  const ui = useSelector(selectUI);
-  const selectedUser = useSelector(selectSelectedUser);
+  // Local state instead of Redux
+  const [filters, setFilters] = useState({
+    search: '',
+    role: '',
+    status: ''
+  });
+  
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10
+  });
+  
+  const [ui, setUI] = useState({
+    activeDropdown: null,
+    isFormModalOpen: false,
+    isDeleteModalOpen: false
+  });
+  
+  const [selectedUser, setSelectedUser] = useState(null);
   
   // TanStack Query
   const usersQuery = useUsers({
@@ -165,37 +161,75 @@ export const useUserManagement = () => {
   // Actions
   const actions = {
     // Filter actions
-    handleSearch: (value) => dispatch(setSearch(value)),
-    handleRoleFilter: (value) => dispatch(setRoleFilter(value === 'all' ? '' : value)),
-    handleStatusFilter: (value) => dispatch(setStatusFilter(value === 'all' ? '' : value)),
-    handleResetFilters: () => dispatch(resetFilters()),
+    handleSearch: (value) => {
+      setFilters(prev => ({ ...prev, search: value }));
+      setPagination(prev => ({ ...prev, page: 1 })); // Reset to first page on search
+    },
+    handleRoleFilter: (value) => {
+      setFilters(prev => ({ ...prev, role: value === 'all' ? '' : value }));
+      setPagination(prev => ({ ...prev, page: 1 }));
+    },
+    handleStatusFilter: (value) => {
+      setFilters(prev => ({ ...prev, status: value === 'all' ? '' : value }));
+      setPagination(prev => ({ ...prev, page: 1 }));
+    },
+    handleResetFilters: () => {
+      setFilters({ search: '', role: '', status: '' });
+      setPagination(prev => ({ ...prev, page: 1 }));
+    },
     
     // Pagination actions
-    handlePageChange: (page) => dispatch(setPage(page)),
-    handleNextPage: () => dispatch(setPage(pagination.page + 1)),
-    handlePrevPage: () => dispatch(setPage(Math.max(1, pagination.page - 1))),
+    handlePageChange: (page) => {
+      setPagination(prev => ({ ...prev, page }));
+    },
+    handleNextPage: () => {
+      setPagination(prev => ({ ...prev, page: prev.page + 1 }));
+    },
+    handlePrevPage: () => {
+      setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }));
+    },
     
     // Dropdown actions
-    handleToggleDropdown: (userId) => dispatch(toggleDropdown(userId)),
-    handleCloseDropdown: () => dispatch(closeDropdown()),
+    handleToggleDropdown: (userId) => {
+      setUI(prev => ({
+        ...prev,
+        activeDropdown: prev.activeDropdown === userId ? null : userId
+      }));
+    },
+    handleCloseDropdown: () => {
+      setUI(prev => ({ ...prev, activeDropdown: null }));
+    },
     
     // Modal actions
-    handleEdit: (user) => dispatch(openFormModal(user)),
-    handleCloseFormModal: () => dispatch(closeFormModal()),
-    handleOpenDeleteModal: (user) => dispatch(openDeleteModal(user)),
-    handleCloseDeleteModal: () => dispatch(closeDeleteModal()),
+    handleEdit: (user) => {
+      setSelectedUser(user);
+      setUI(prev => ({ ...prev, isFormModalOpen: true }));
+    },
+    handleCloseFormModal: () => {
+      setUI(prev => ({ ...prev, isFormModalOpen: false }));
+      setSelectedUser(null);
+    },
+    handleOpenDeleteModal: (user) => {
+      setSelectedUser(user);
+      setUI(prev => ({ ...prev, isDeleteModalOpen: true }));
+    },
+    handleCloseDeleteModal: () => {
+      setUI(prev => ({ ...prev, isDeleteModalOpen: false }));
+      setSelectedUser(null);
+    },
     
     // Async actions
     handleDeleteUser: async () => {
       if (!selectedUser) return;
       await deleteUserMutation.mutateAsync(selectedUser.id);
-      dispatch(closeDeleteModal());
+      setUI(prev => ({ ...prev, isDeleteModalOpen: false }));
+      setSelectedUser(null);
     },
     
     handleToggleStatus: async (user) => {
       const newStatus = user.status === 'active' ? 'inactive' : 'active';
       await updateStatusMutation.mutateAsync({ userId: user.id, status: newStatus });
-      dispatch(closeDropdown());
+      setUI(prev => ({ ...prev, activeDropdown: null }));
     },
     
     handleRefetch: () => {

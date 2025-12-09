@@ -54,7 +54,8 @@ export const transformGeoJSONToSpeciesData = (geoJSON) => {
   const speciesMap = new Map();
   const typesSet = new Set();
   const habitatsSet = new Set();
-  
+
+
   // Process each sighting feature from the GeoJSON
   geoJSON.features.forEach(feature => {
     const props = feature.properties;
@@ -91,6 +92,7 @@ export const transformGeoJSONToSpeciesData = (geoJSON) => {
       lng: props.longitude,
       date: props.observedAt,
       locationName: props.locationName,
+      municipality: props.municipality,
       notes: props.notes,
       imageUrl: props.imageUrl,
       media: props.media

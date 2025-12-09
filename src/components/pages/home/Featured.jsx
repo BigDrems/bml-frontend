@@ -52,7 +52,6 @@ function Featured() {
   }
 
   const featuredSightings = sightingsData?.data?.slice(0, FEATURED_SIGHTINGS_LIMIT) || [];
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 md:mt-15 px-4 md:px-0">
         {featuredSightings.map((sighting) => {

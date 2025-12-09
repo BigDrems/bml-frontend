@@ -21,6 +21,7 @@ const MapPage = () => {
     [sightingsGeoJSON]
   );
 
+
   const {
     filters,
     updateFilter,

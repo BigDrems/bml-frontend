@@ -62,3 +62,10 @@ export const getSightingImageUrl = (sighting, species) => {
 export const getUnsplashFallback = (speciesName) => {
   return `https://source.unsplash.com/400x300/?${speciesName?.replace(' ', '+')}`;
 };
+
+export const getFullLocation = (sighting) => {
+      const name = sighting.locationName?.trim();
+      const muni = sighting.municipality?.trim();
+      if (name && muni) return `${name}, ${muni}`;
+      return name || muni || '';
+};

@@ -19,6 +19,7 @@ export const MapView = ({ protectedAreaOpacity, showProtectedAreas, species = []
     createGeoJSONEventHandlers(feature, layer, { geoJSONStyle, highlightStyle });
   };
 
+
   return (
     <div className="flex-1 relative">
       <MapContainer

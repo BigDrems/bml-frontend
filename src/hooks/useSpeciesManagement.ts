@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import * as speciesAPI from '../api/species';
 import type { Species, CreateSpeciesInput, UpdateSpeciesInput, SpeciesFilters } from '../types/species';
 import {
@@ -56,6 +57,11 @@ export const useSpeciesManagement = () => {
     (state: RootState) => state.speciesManagement
   );
 
+  // Clean filters object to remove empty values for consistent queryKey
+  const activeFilters = Object.fromEntries(
+    Object.entries(filters).filter(([, value]) => value && value !== '')
+  );
+
   // Query: Fetch all species
   const {
     data: species = [],
@@ -64,10 +70,25 @@ export const useSpeciesManagement = () => {
     error,
     refetch,
   } = useQuery<Species[]>({
-    queryKey: ['species', filters],
-    queryFn: () => speciesAPI.getAllSpecies(filters),
+    queryKey: ['species', activeFilters],
+    queryFn: () => speciesAPI.getAllSpecies(activeFilters),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
+
+  // Extract unique families and classes from all species
+  const uniqueFamilies = React.useMemo(() => {
+    const families = species
+      .map(s => s.family)
+      .filter((f): f is string => Boolean(f));
+    return [...new Set(families)].sort();
+  }, [species]);
+
+  const uniqueClasses = React.useMemo(() => {
+    const classes = species
+      .map(s => s.class)
+      .filter((c): c is string => Boolean(c));
+    return [...new Set(classes)].sort();
+  }, [species]);
 
   // Query: Fetch single species
   const useSpeciesById = (id: string | undefined) => {
@@ -170,6 +191,8 @@ export const useSpeciesManagement = () => {
     isLoading,
     isError,
     error,
+    uniqueFamilies,
+    uniqueClasses,
     
     // Modal states
     isFormModalOpen,

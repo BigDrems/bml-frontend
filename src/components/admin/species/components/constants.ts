@@ -1,4 +1,7 @@
 export const conservationStatuses = [
+  'Not Assessed',
+  'Not Evaluated',
+  'Unassessed',
   'Least Concern',
   'Near Threatened',
   'Vulnerable',

@@ -17,6 +17,8 @@ export const SpeciesManagement: React.FC = () => {
     isDeleteModalOpen,
     mode,
     filters,
+    uniqueFamilies,
+    uniqueClasses,
     createMutation,
     updateMutation,
     deleteMutation,
@@ -31,6 +33,10 @@ export const SpeciesManagement: React.FC = () => {
     handleUpdateFilter,
     handleClearFilters,
   } = useSpeciesManagement();
+
+  // Ensure species is always an array
+  const speciesArray = Array.isArray(species) ? species : [];
+
 
   const handleFormSubmit = (data: CreateSpeciesInput) => {
     if (mode === 'create') {
@@ -82,30 +88,32 @@ export const SpeciesManagement: React.FC = () => {
         filters={filters}
         onUpdateFilter={handleUpdateFilter}
         onClearFilters={handleClearFilters}
+        uniqueFamilies={uniqueFamilies}
+        uniqueClasses={uniqueClasses}
       />
 
       {/* Stats */}
       <div className="bg-white p-4 rounded-lg shadow">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="text-center">
-            <p className="text-3xl font-bold text-green-600">{species.length}</p>
+            <p className="text-3xl font-bold text-green-600">{speciesArray.length}</p>
             <p className="text-sm text-gray-600">Total Species</p>
           </div>
           <div className="text-center">
             <p className="text-3xl font-bold text-red-600">
-              {species.filter((s) => s.conservationStatus?.includes('Endangered')).length}
+              {speciesArray.filter((s) => s.conservationStatus?.includes('Endangered')).length}
             </p>
             <p className="text-sm text-gray-600">Endangered</p>
           </div>
           <div className="text-center">
             <p className="text-3xl font-bold text-yellow-600">
-              {species.filter((s) => s.conservationStatus === 'Vulnerable').length}
+              {speciesArray.filter((s) => s.conservationStatus === 'Vulnerable').length}
             </p>
             <p className="text-sm text-gray-600">Vulnerable</p>
           </div>
           <div className="text-center">
             <p className="text-3xl font-bold text-blue-600">
-              {new Set(species.map((s) => s.family).filter(Boolean)).size}
+              {new Set(speciesArray.map((s) => s.family).filter(Boolean)).size}
             </p>
             <p className="text-sm text-gray-600">Families</p>
           </div>
@@ -115,7 +123,7 @@ export const SpeciesManagement: React.FC = () => {
       {/* Table */}
       <div className="bg-white rounded-lg shadow">
         <SpeciesTable
-          species={species}
+          species={speciesArray}
           isLoading={isLoading}
           onEdit={handleOpenEditModal}
           onDelete={handleOpenDeleteModal}

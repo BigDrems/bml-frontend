@@ -8,7 +8,8 @@ const API_URL = import.meta.env.VITE_API_URL;
  */
 export const getAllSpecies = async (params = {}): Promise<Species[]> => {
   const response = await axios.get(`${API_URL}/species`, { params });
-  return response.data;
+  // Backend returns { page, limit, total, data } - extract the data array
+  return response.data.data || response.data;
 };
 
 /**

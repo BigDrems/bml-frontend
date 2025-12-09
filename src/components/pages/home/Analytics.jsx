@@ -63,23 +63,43 @@ function Analytics() {
 
   return (
     <div className="flex justify-center px-4 md:px-0 mt-8 md:mt-15">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1400px] w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1400px] w-full">
         {analyticsItems.map((item, index) => (
           <div
             key={index}
-            className="flex flex-col items-start p-4 md:p-6 bg-[#445133] rounded-[5px] shadow-md"
+            className="relative overflow-hidden bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
-            <h2 className="text-white text-[14px] md:text-[16px] font-inter font-bold">
-              {item.title}
-            </h2>
-            <p className="text-[28px] md:text-[32px] lg:text-[36px] text-white font-bold font-inter self-center py-2 md:py-3">
-              {item.value.toLocaleString()}
-            </p>          
-            {item.percent !== 0 && (
-              <span className="text-[#34FB02] text-[12px] md:text-[13px] italic font-inter">
-                {item.percent >= 0 ? '+' : ''}{item.percent}% this month
-              </span>
-            )}
+            {/* Decorative background element */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#90BE54]/10 to-transparent rounded-bl-full"></div>
+            
+            <div className="relative z-10">
+              <h2 className="text-gray-600 text-sm font-semibold uppercase tracking-wide mb-3">
+                {item.title}
+              </h2>
+              <p className="text-5xl font-bold font-inter text-[#445133] mb-3">
+                {item.value.toLocaleString()}
+              </p>          
+              {item.percent !== 0 && (
+                <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+                    item.percent >= 0 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-red-100 text-red-700'
+                  }`}>
+                    <svg 
+                      className={`w-4 h-4 ${item.percent >= 0 ? '' : 'rotate-180'}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                    <span>{Math.abs(item.percent)}%</span>
+                  </div>
+                  <span className="text-xs text-gray-500">this month</span>
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>

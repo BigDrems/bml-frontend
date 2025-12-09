@@ -6,12 +6,14 @@ import speciesFilterReducer from './slices/speciesFilterSlice';
 import speciesExplorerReducer from './slices/speciesExplorerSlice';
 import userManagementReducer from './slices/userManagementSlice';
 import speciesManagementReducer from './slices/speciesManagementSlice';
+import sightingReviewReducer from './slices/sightingReviewSlice';
 
 const rootReducer = combineReducers({
   speciesFilter: speciesFilterReducer,
   speciesExplorer: speciesExplorerReducer,
   userManagement: userManagementReducer,
   speciesManagement: speciesManagementReducer,
+  sightingReview: sightingReviewReducer,
 });
 
 const persistConfig = {

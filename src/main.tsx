@@ -18,6 +18,7 @@ import LogSighting from "@/pages/LogSighting";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminUsers from "@/pages/admin/AdminUsers";
+import AdminSightings from "@/pages/admin/AdminSightings";
 import './index.css';
 import { AdminSpecies } from "./pages/admin/AdminSpecies";
 
@@ -60,6 +61,7 @@ createRoot(document.getElementById("root")!).render(
                   <Route index element={<AdminDashboard />} />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="species" element={<AdminSpecies />} />
+                  <Route path="sightings" element={<AdminSightings />} />
                   {/* Add more admin routes here */}
                 </Route>
               </Route>

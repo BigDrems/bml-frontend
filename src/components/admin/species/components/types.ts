@@ -13,6 +13,8 @@ export interface SpeciesFiltersProps {
   filters: SpeciesFilters;
   onUpdateFilter: (key: keyof SpeciesFilters, value: string) => void;
   onClearFilters: () => void;
+  uniqueFamilies: string[];
+  uniqueClasses: string[];
 }
 
 export interface SpeciesTableProps {

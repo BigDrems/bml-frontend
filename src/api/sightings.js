@@ -107,6 +107,34 @@ export const verifySighting = async (id) => {
 };
 
 /**
+ * Approve a sighting (Admin only)
+ * @param {string} id 
+ * @returns {Promise<{message: string, sighting: Object}>}
+ */
+export const approveSighting = async (id) => {
+  const headers = await getAuthHeader();
+  const response = await axios.patch(`${API_URL}/sightings/${id}/approve`, {}, {
+    headers
+  });
+  return response.data;
+};
+
+/**
+ * Reject a sighting (Admin only)
+ * @param {string} id 
+ * @param {string} reason - Reason for rejection
+ * @returns {Promise<{message: string, sighting: Object}>}
+ */
+export const rejectSighting = async (id, reason) => {
+  const headers = await getAuthHeader();
+  const response = await axios.patch(`${API_URL}/sightings/${id}/reject`, 
+    { reason }, 
+    { headers }
+  );
+  return response.data;
+};
+
+/**
  * Get sightings as GeoJSON (optionally filtered by species or status)
  * @param {Object} params - Query parameters: speciesId, status
  * @returns {Promise<Object>} GeoJSON FeatureCollection

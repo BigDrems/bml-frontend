@@ -65,7 +65,9 @@ export const SpeciesTable: React.FC<SpeciesTableProps> = ({
                 )}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-medium text-gray-900">{item.commonName}</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {item.commonName?.split(',')[0]?.trim() || item.commonName}
+                </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-500 italic">{item.scientificName}</div>
@@ -85,7 +87,7 @@ export const SpeciesTable: React.FC<SpeciesTableProps> = ({
                       : 'bg-green-100 text-green-800'
                   }`}
                 >
-                  {item.conservationStatus || 'Not Assessed'}
+                  {item.conservationStatus?.split(' ').slice(0, 2).join(' ') || 'Not Assessed'}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

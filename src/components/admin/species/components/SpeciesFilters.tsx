@@ -13,6 +13,8 @@ export const SpeciesFiltersComponent: React.FC<SpeciesFiltersProps> = ({
   filters,
   onUpdateFilter,
   onClearFilters,
+  uniqueFamilies,
+  uniqueClasses,
 }) => {
   const hasActiveFilters = Object.values(filters).some((value) => value);
 
@@ -49,7 +51,7 @@ export const SpeciesFiltersComponent: React.FC<SpeciesFiltersProps> = ({
             Conservation Status
           </label>
           <Select
-            value={filters.conservationStatus || undefined}
+            value={filters.conservationStatus || 'all'}
             onValueChange={(value) => onUpdateFilter('conservationStatus', value === 'all' ? '' : value)}
           >
             <SelectTrigger className="w-full">
@@ -69,25 +71,43 @@ export const SpeciesFiltersComponent: React.FC<SpeciesFiltersProps> = ({
         {/* Family */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Family</label>
-          <input
-            type="text"
-            value={filters.family || ''}
-            onChange={(e) => onUpdateFilter('family', e.target.value)}
-            placeholder="Filter by family..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
+          <Select
+            value={filters.family || 'all'}
+            onValueChange={(value) => onUpdateFilter('family', value === 'all' ? '' : value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Families" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Families</SelectItem>
+              {uniqueFamilies.map((family) => (
+                <SelectItem key={family} value={family}>
+                  {family}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Class */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Class</label>
-          <input
-            type="text"
-            value={filters.class || ''}
-            onChange={(e) => onUpdateFilter('class', e.target.value)}
-            placeholder="Filter by class..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
+          <Select
+            value={filters.class || 'all'}
+            onValueChange={(value) => onUpdateFilter('class', value === 'all' ? '' : value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Classes" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Classes</SelectItem>
+              {uniqueClasses.map((className) => (
+                <SelectItem key={className} value={className}>
+                  {className}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

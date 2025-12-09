@@ -44,38 +44,142 @@ function Featured() {
 
   const featuredSightings = sightingsData?.data?.slice(0, 3) || [];
 
+  // Helper function to format location
+  const formatLocation = (sighting) => {
+    const parts = [];
+    
+    if (sighting.locationName) {
+      parts.push(sighting.locationName);
+    }
+    
+    // Add town/municipality if available
+    if (sighting.location.municipality || sighting.location.town) {
+      parts.push(sighting.location.municipality || sighting.location.town);
+    }
+      
+    
+    return parts.filter(Boolean).join(", ");
+  };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-15 px-4 md:px-0">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 md:mt-15 px-4 md:px-0">
         {featuredSightings.map((sighting) => {
           const species = sighting.species || {};
           const imageUrl = sighting.mediaUrls?.[0] || species.imageUrl || species.image_url || species.image;
-          const location = sighting.locationName || "Leyte, Philippines";
+          const location = formatLocation(sighting);
+          const commonName = species.commonName?.split(',')[0]?.trim() || species.commonName || "Unknown Species";
           
           return (
-            <div key={sighting.id} className="flex flex-col bg-white rounded-[10px] shadow-[4px_4px_8px_#445133] overflow-hidden max-w-[400px] mx-auto w-full">
-              <img 
-                src={imageUrl || "https://placehold.co/600x400/e2e8f0/1e293b?text=No+Image"} 
-                alt={species.commonName || "Species"} 
-                className="w-full h-[250px] sm:h-[300px] md:h-[350px] lg:h-[392px] object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = "https://placehold.co/600x400/e2e8f0/1e293b?text=No+Image";
-                }}
-              />
-              <div className="p-4 md:p-6">
-                <h2 className="text-black text-[18px] md:text-[20px] lg:text-[24px] font-inter font-bold">{species.commonName || "Unknown Species"}</h2>
-                <p className="text-green-900 text-[9px] md:text-[15px] italic font-inter">{species.type || species.speciesType}</p>
-                <p className="text-black text-[12px] md:text-[13px] font-inter italic flex items-center pt-2">
-                  <MapPin size={18} className="mr-2 md:mr-2" color="green" /> 
-                  <span className="md:hidden">{location.length > 30 ? location.substring(0, 30) + '...' : location}</span>
-                  <span className="hidden md:inline">{location}</span>
-                </p>
+            <div 
+              key={sighting.id} 
+              className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 max-w-[400px] mx-auto w-full border border-gray-100"
+            >
+              {/* Image Container */}
+              <div className="relative overflow-hidden h-[300px] md:h-[350px]">
+                <img 
+                  src={imageUrl || "https://placehold.co/600x400/e2e8f0/1e293b?text=No+Image"} 
+                  alt={commonName} 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://placehold.co/600x400/e2e8f0/1e293b?text=No+Image";
+                  }}
+                />
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                {/* Verified Badge - Top Left */}
+                {sighting.status === 'VERIFIED' && (
+                  <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-xs font-bold">Verified</span>
+                  </div>
+                )}
+
+                {/* Species Type Badge - Top Right */}
+                {(species.type || species.speciesType) && (
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                    <span className="text-xs font-semibold text-gray-700">{species.type || species.speciesType}</span>
+                  </div>
+                )}
               </div>
-              <div className="flex justify-center pb-4 md:pb-6 mt-3 md:mt-5">
-                <Button asChild variant="outline" className="w-[110px] md:w-[130px] h-[40px] md:h-[45px] !bg-[#4F8706] !text-white text-[14px] md:text-[16px] border-none"> 
-                  <Link to={`/species/${species.id || sighting.speciesId}`}>
-                    View Details
-                  </Link>
-                </Button>
+
+              {/* Content */}
+              <div className="p-6 flex-1 flex flex-col">
+                <h2 className="text-gray-900 text-xl md:text-2xl font-bold font-inter mb-2 line-clamp-1">
+                  {commonName}
+                </h2>
+
+                {/* Scientific Name */}
+                {species.scientificName && (
+                  <p className="text-sm italic text-gray-500 mb-3">{species.scientificName}</p>
+                )}
+                
+                {/* Location */}
+                <div className="flex items-start gap-2 text-gray-600 mb-3">
+                  <MapPin size={18} className="mt-0.5 flex-shrink-0 text-green-600" /> 
+                  <span className="text-sm line-clamp-2">{location}</span>
+                </div>
+
+                {/* Additional Info Pills */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {species.family && (
+                    <div className="bg-blue-50 text-blue-700 px-2 py-1 rounded-md text-xs font-medium">
+                      {species.family}
+                    </div>
+                  )}
+                  {species.conservationStatus && (
+                    <div className={`px-2 py-1 rounded-md text-xs font-medium ${
+                      species.conservationStatus?.includes('Endangered') 
+                        ? 'bg-red-50 text-red-700'
+                        : species.conservationStatus === 'Vulnerable'
+                        ? 'bg-yellow-50 text-yellow-700'
+                        : 'bg-green-50 text-green-700'
+                    }`}>
+                      {species.conservationStatus?.split(' ').slice(0, 2).join(' ')}
+                    </div>
+                  )}
+                </div>
+
+                {/* Observation Date */}
+                {sighting.observedAt && (
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>Observed {new Date(sighting.observedAt).toLocaleDateString('en-US', { 
+                      year: 'numeric', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    })}</span>
+                  </div>
+                )}
+
+                {/* Verification Badge */}
+                {sighting.verificationStatus === 'VERIFIED' && (
+                  <div className="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium w-fit mb-4">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    Verified Sighting
+                  </div>
+                )}
+
+                {/* View Details Button */}
+                <div className="mt-auto pt-2">
+                  <Button 
+                    asChild 
+                    className="w-full bg-gradient-to-r from-[#4F8706] to-[#5FA707] hover:from-[#3F6D05] hover:to-[#4F8706] text-white font-semibold py-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                  > 
+                    <Link to={`/species/${species.id || sighting.speciesId}`} className="flex items-center justify-center gap-2">
+                      <span>View Details</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           );

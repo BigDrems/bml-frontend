@@ -19,6 +19,7 @@ import AdminLayout from "@/components/admin/layout/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminUsers from "@/pages/admin/AdminUsers";
 import './index.css';
+import { AdminSpecies } from "./pages/admin/AdminSpecies";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,6 +59,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index element={<AdminDashboard />} />
                   <Route path="users" element={<AdminUsers />} />
+                  <Route path="species" element={<AdminSpecies />} />
                   {/* Add more admin routes here */}
                 </Route>
               </Route>

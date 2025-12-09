@@ -4,12 +4,21 @@ import { Link } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { getAllSightings } from "@/api/sightings";
+import { FEATURED_SIGHTINGS_LIMIT, FEATURED_SIGHTINGS_STATUS, FEATURED_STALE_TIME, FALLBACK_IMAGE } from './const';
+import { 
+  formatLocation, 
+  getSightingImage, 
+  getSpeciesCommonName, 
+  getConservationStatusClasses, 
+  formatObservationDate,
+  truncateConservationStatus 
+} from './utils';
 
 function Featured() {
   const { data: sightingsData, isLoading, isError } = useQuery({
     queryKey: ['featuredSightings'],
-    queryFn: () => getAllSightings({ limit: 3, status: 'VERIFIED' }),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryFn: () => getAllSightings({ limit: FEATURED_SIGHTINGS_LIMIT, status: FEATURED_SIGHTINGS_STATUS }),
+    staleTime: FEATURED_STALE_TIME,
   });
 
   if (isLoading) {
@@ -42,32 +51,15 @@ function Featured() {
     );
   }
 
-  const featuredSightings = sightingsData?.data?.slice(0, 3) || [];
-
-  // Helper function to format location
-  const formatLocation = (sighting) => {
-    const parts = [];
-    
-    if (sighting.locationName) {
-      parts.push(sighting.locationName);
-    }
-    
-    // Add town/municipality if available
-    if (sighting.location.municipality || sighting.location.town) {
-      parts.push(sighting.location.municipality || sighting.location.town);
-    }
-      
-    
-    return parts.filter(Boolean).join(", ");
-  };
+  const featuredSightings = sightingsData?.data?.slice(0, FEATURED_SIGHTINGS_LIMIT) || [];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 md:mt-15 px-4 md:px-0">
         {featuredSightings.map((sighting) => {
           const species = sighting.species || {};
-          const imageUrl = sighting.mediaUrls?.[0] || species.imageUrl || species.image_url || species.image;
+          const imageUrl = getSightingImage(sighting, species);
           const location = formatLocation(sighting);
-          const commonName = species.commonName?.split(',')[0]?.trim() || species.commonName || "Unknown Species";
+          const commonName = getSpeciesCommonName(species);
           
           return (
             <div 
@@ -77,11 +69,11 @@ function Featured() {
               {/* Image Container */}
               <div className="relative overflow-hidden h-[300px] md:h-[350px]">
                 <img 
-                  src={imageUrl || "https://placehold.co/600x400/e2e8f0/1e293b?text=No+Image"} 
+                  src={imageUrl || FALLBACK_IMAGE} 
                   alt={commonName} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   onError={(e) => {
-                    e.currentTarget.src = "https://placehold.co/600x400/e2e8f0/1e293b?text=No+Image";
+                    e.currentTarget.src = FALLBACK_IMAGE;
                   }}
                 />
                 {/* Gradient Overlay */}
@@ -130,14 +122,8 @@ function Featured() {
                     </div>
                   )}
                   {species.conservationStatus && (
-                    <div className={`px-2 py-1 rounded-md text-xs font-medium ${
-                      species.conservationStatus?.includes('Endangered') 
-                        ? 'bg-red-50 text-red-700'
-                        : species.conservationStatus === 'Vulnerable'
-                        ? 'bg-yellow-50 text-yellow-700'
-                        : 'bg-green-50 text-green-700'
-                    }`}>
-                      {species.conservationStatus?.split(' ').slice(0, 2).join(' ')}
+                    <div className={`px-2 py-1 rounded-md text-xs font-medium ${getConservationStatusClasses(species.conservationStatus)}`}>
+                      {truncateConservationStatus(species.conservationStatus)}
                     </div>
                   )}
                 </div>
@@ -148,11 +134,7 @@ function Featured() {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <span>Observed {new Date(sighting.observedAt).toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'short', 
-                      day: 'numeric' 
-                    })}</span>
+                    <span>Observed {formatObservationDate(sighting.observedAt)}</span>
                   </div>
                 )}
 

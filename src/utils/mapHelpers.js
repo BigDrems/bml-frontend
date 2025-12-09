@@ -41,8 +41,9 @@ export const categorizeHabitat = (habitatDesc) => {
 };
 
 /**
- * Transform GeoJSON features to species-grouped format
- * @param {Object} geoJSON - GeoJSON FeatureCollection from API
+ * Transform GeoJSON sighting features to species-grouped format
+ * Groups verified sightings by species for map display
+ * @param {Object} geoJSON - GeoJSON FeatureCollection from sightings API
  * @returns {Object} { speciesData, speciesTypes, habitatTypes }
  */
 export const transformGeoJSONToSpeciesData = (geoJSON) => {
@@ -54,12 +55,14 @@ export const transformGeoJSONToSpeciesData = (geoJSON) => {
   const typesSet = new Set();
   const habitatsSet = new Set();
   
+  // Process each sighting feature from the GeoJSON
   geoJSON.features.forEach(feature => {
     const props = feature.properties;
     const speciesId = props.speciesId;
     
     if (!speciesId) return;
     
+    // Extract species info from the sighting's embedded species data
     const speciesObj = props.species || {};
     const speciesType = (speciesObj.speciesType || 'unknown').toLowerCase();
     const habitatCategory = categorizeHabitat(speciesObj.habitat);

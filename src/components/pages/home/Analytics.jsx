@@ -1,36 +1,17 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAnalytics } from "@/api/analytics";
+import { ANALYTICS_ITEMS_CONFIG, ANALYTICS_STALE_TIME } from './const';
+import { transformAnalyticsData } from './utils';
 
 function Analytics() {
   const { data: stats, isLoading, isError } = useQuery({
     queryKey: ['analytics'],
     queryFn: getAnalytics,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: ANALYTICS_STALE_TIME,
   });
 
-  const analyticsItems = [
-    {
-      title: "Total Species",
-      value: stats?.totalSpecies || 0,
-      percent: stats?.percentages?.species || 0,
-    },
-    {
-      title: "Total Observations",
-      value: stats?.totalObservations || 0,
-      percent: stats?.percentages?.observations || 0,
-    },
-    {
-      title: "Active Contributors",
-      value: stats?.activeContributors || 0,
-      percent: stats?.percentages?.contributors || 0,
-    },
-    {
-      title: "Protected Areas",
-      value: stats?.protectedAreas || 0,
-      percent: stats?.percentages?.protectedAreas || 0,
-    },
-  ];
+  const analyticsItems = transformAnalyticsData(stats, ANALYTICS_ITEMS_CONFIG);
 
   if (isLoading) {
     return (

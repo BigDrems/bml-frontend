@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Sidebar } from "@/components/pages/map/Sidebar";
 import { MapView } from "@/components/pages/map/MapView";
 import { MapSkeleton } from "@/components/pages/map/MapSkeleton";
-import { useSpeciesFilter } from "@/hooks/useSpeciesFilter";
+import { useSightingFilter } from "@/hooks/useSightingFilter";
 import { getSightingsGeoJSON } from "@/api/sightings";
 import { transformGeoJSONToSpeciesData } from "@/utils/mapHelpers";
 
@@ -11,8 +11,8 @@ const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
 const MapPage = () => {
   const { data: sightingsGeoJSON, isPending } = useQuery({
-    queryKey: ["sightings-geojson"],
-    queryFn: getSightingsGeoJSON,
+    queryKey: ["sightings-geojson", "VERIFIED"],
+    queryFn: () => getSightingsGeoJSON({ status: "VERIFIED" }),
     staleTime: STALE_TIME,
   });
 
@@ -27,7 +27,7 @@ const MapPage = () => {
     toggleSpeciesType,
     toggleAllTypes,
     filteredSpecies,
-  } = useSpeciesFilter(speciesData, speciesTypes);
+  } = useSightingFilter(speciesData, speciesTypes);
 
   const uiState = {
     showObsDate: filters.ui?.showObsDate ?? false,

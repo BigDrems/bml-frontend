@@ -1,5 +1,5 @@
 import  {FilterHeader } from "./filters/FilterHeader";
-import  {SpeciesFilter } from "./filters/SpeciesFilter";
+import  {SightingFilter} from "./filters/SightingFilter";
 import  {CollapsibleSection } from "./CollapsibleSection";
 import { MapLayerControls} from "./MapLayerControl";
 import { HabitatFilter } from "./filters/HabitatFilter";
@@ -85,7 +85,7 @@ export const Sidebar = ({
         <FilterHeader />
         
         <div className="flex-1 overflow-y-auto">
-          <SpeciesFilter
+          <SightingFilter
             speciesTypes={speciesTypes}
             selectedSpecies={selectedTypes}
             onToggleSpecies={onToggleSpecies}

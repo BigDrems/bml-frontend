@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 
-export const SpeciesCheckbox = ({ species, checked, onChange }) => (
+export const SightingCheckbox = ({ species, checked, onChange }) => (
   <label className="group flex items-center justify-between p-2.5 rounded-lg border border-transparent hover:bg-gray-50 hover:border-gray-100 cursor-pointer transition-all duration-200">
     <div className="flex items-center gap-3">
       <div 

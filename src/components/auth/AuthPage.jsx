@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Navigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import SignIn from './SignIn';
 import Register from './Register';
 import { registerUser, loginUser } from '../../api/auth';
@@ -16,13 +17,19 @@ export default function AuthPage() {
   const registerMutation = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      console.log('Registration successful:', data);
-      alert('Registration successful! Please sign in.');
+      toast.success('Account created successfully!', {
+        description: 'Please sign in to continue.',
+        duration: 4000,
+      });
       setIsSignIn(true);
     },
     onError: (error) => {
       console.error('Registration failed:', error);
-      alert(`Registration failed: ${error.response?.data?.message || error.message}`);
+      const errorMessage = error.response?.data?.message || error.message || 'Unable to create account';
+      toast.error('Registration Failed', {
+        description: errorMessage,
+        duration: 5000,
+      });
     }
   });
 
@@ -30,13 +37,19 @@ export default function AuthPage() {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      console.log('Login successful:', data);
-      alert('Login successful!');
+      toast.success('Welcome back!', {
+        description: 'You have successfully signed in.',
+        duration: 3000,
+      });
       // Here you would typically store the user data or redirect
     },
     onError: (error) => {
       console.error('Login failed:', error);
-      alert(`Login failed: ${error.response?.data?.message || error.message}`);
+      const errorMessage = error.response?.data?.message || error.message || 'Invalid credentials';
+      toast.error('Sign In Failed', {
+        description: errorMessage,
+        duration: 5000,
+      });
     }
   });
 
@@ -49,7 +62,25 @@ export default function AuthPage() {
       loginMutation.mutate(idToken);
     } catch (error) {
       console.error("Firebase Sign In Error", error);
-      alert(`Firebase Sign In Failed: ${error.message}`);
+      let errorMessage = 'Unable to sign in. Please try again.';
+      
+      // Provide user-friendly error messages
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+        errorMessage = 'Invalid email or password.';
+      } else if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No account found with this email.';
+      } else if (error.code === 'auth/user-disabled') {
+        errorMessage = 'This account has been disabled.';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed attempts. Please try again later.';
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+      
+      toast.error('Authentication Failed', {
+        description: errorMessage,
+        duration: 5000,
+      });
     }
   };
 

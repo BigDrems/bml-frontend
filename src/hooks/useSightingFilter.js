@@ -11,7 +11,13 @@ import {
   initializeSelectedTypes
 } from '../store/slices/speciesFilterSlice';
 
-export const useSpeciesFilter = (speciesData, speciesTypes = []) => {
+/**
+ * Hook for filtering sighting data on the map
+ * Filters are applied to verified sightings grouped by species
+ * @param {Array} speciesData - Species objects with their associated sightings
+ * @param {Array} speciesTypes - Available species types from sighting data
+ */
+export const useSightingFilter = (speciesData, speciesTypes = []) => {
   const dispatch = useDispatch();
   const filters = useSelector(state => state.speciesFilter);
 
@@ -40,7 +46,7 @@ export const useSpeciesFilter = (speciesData, speciesTypes = []) => {
         dispatch(setUI(value));
         break;
       default:
-        console.warn(`Unknown filter key: ${key}`);
+        break;
     }
   };
 
@@ -55,11 +61,12 @@ export const useSpeciesFilter = (speciesData, speciesTypes = []) => {
   const filteredSpecies = useMemo(() => {
     const { dateRange, selectedTypes, habitat, search } = filters;
 
+    // First, filter sightings by date range
     return speciesData.map(species => {
       const filteredSightings = species.sightings.filter(sighting => {
         if (!dateRange.start && !dateRange.end) return true;
         
-        // Handle the sighting date - could be ISO string or Date object
+        // Filter by observation date from sighting
         if (!sighting.date) return true;
         
         const sightingDate = new Date(sighting.date);
@@ -84,16 +91,16 @@ export const useSpeciesFilter = (speciesData, speciesTypes = []) => {
       return { ...species, sightings: filteredSightings };
     }).filter(species => {
       
-      // Must have sightings after date filter
+      // Must have verified sightings after date filter
       if (species.sightings.length === 0) return false;
 
-      // Filter by Species Type (Checkbox)
+      // Filter by Species Type from sighting data (e.g., bird, mammal)
       if (!selectedTypes[species.type]) return false;
 
-      // Filter by Habitat
+      // Filter by Habitat from sighting data
       if (habitat !== 'all' && species.habitat !== habitat) return false;
 
-      // Filter by Search Term
+      // Filter by Search Term on species name from sighting data
       if (search) {
         const term = search.toLowerCase();
         const matchesCommon = species.commonName?.toLowerCase().includes(term);

@@ -20,7 +20,9 @@ const fetchSpecies = async () => {
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
-  return response.json();
+  const result = await response.json();
+  // Backend returns { page, limit, total, data } - extract the data array
+  return result.data || result;
 };
 
 export const useSpeciesExplorer = () => {

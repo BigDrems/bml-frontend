@@ -45,10 +45,8 @@ export const getUsers = async ({ page = 1, limit = 10, search = '', role = '', s
       params
     });
 
-    console.log('Users API response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching users:', error);
     throw error;
   }
 };
@@ -64,7 +62,6 @@ export const getUserById = async (userId) => {
     const response = await axios.get(`${API_URL}/users/${userId}`, { headers });
     return response.data;
   } catch (error) {
-    console.error('Error fetching user:', error);
     throw error;
   }
 };
@@ -81,7 +78,6 @@ export const updateUser = async (userId, userData) => {
     const response = await axios.put(`${API_URL}/users/${userId}`, userData, { headers });
     return response.data;
   } catch (error) {
-    console.error('Error updating user:', error);
     throw error;
   }
 };
@@ -97,7 +93,6 @@ export const deleteUser = async (userId) => {
     const response = await axios.delete(`${API_URL}/users/${userId}`, { headers });
     return response.data;
   } catch (error) {
-    console.error('Error deleting user:', error);
     throw error;
   }
 };
@@ -114,7 +109,6 @@ export const updateUserRole = async (userId, role) => {
     const response = await axios.put(`${API_URL}/users/${userId}`, { role }, { headers });
     return response.data;
   } catch (error) {
-    console.error('Error updating user role:', error);
     throw error;
   }
 };
@@ -131,7 +125,6 @@ export const updateUserStatus = async (userId, status) => {
     const response = await axios.put(`${API_URL}/users/${userId}`, { status }, { headers });
     return response.data;
   } catch (error) {
-    console.error('Error updating user status:', error);
     throw error;
   }
 };

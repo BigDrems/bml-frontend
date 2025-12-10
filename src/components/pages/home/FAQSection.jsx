@@ -1,27 +1,9 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { FAQ_DATA } from './const';
 
 function FAQSection() {
   const [openIndex, setOpenIndex] = useState(null);
-
-  const faqs = [
-    {
-      question: "What is BioMap Leyte?",
-      answer: "BioMap Leyte is a web and mobile platform that maps and tracks wildlife sightings across Leyte, Philippines, promoting citizen participation, biodiversity awareness, and data-driven conservation."
-    },
-    {
-      question: "Who can contribute sightings?",
-      answer: "Anyone interested in wildlife and nature can contribute sightings to BioMap Leyte. We encourage citizen scientists, nature enthusiasts, researchers, and local communities to participate."
-    },
-    {
-      question: "How is the data used?",
-      answer: "The data collected through BioMap Leyte is used to monitor biodiversity, support conservation efforts, and provide valuable insights for researchers and policymakers."
-    },
-    {
-      question: "Do I need to be an expert to identify a species?",
-      answer: "No, you don't need to be an expert. BioMap Leyte welcomes all contributions, and our community and experts help verify and identify species."
-    }
-  ];
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -40,7 +22,7 @@ function FAQSection() {
         </div>
 
         <div className="space-y-4">
-          {faqs.map((faq, index) => (
+          {FAQ_DATA.map((faq, index) => (
             <div
               key={index}
               className="bg-[#445133] rounded-lg shadow-md overflow-hidden transition-all duration-200"

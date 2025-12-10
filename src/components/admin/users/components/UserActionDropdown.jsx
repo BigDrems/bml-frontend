@@ -12,6 +12,7 @@ function UserActionDropdown({
   onDelete 
 }) {
   const handleDelete = (e) => {
+    e.preventDefault();
     e.stopPropagation();
     onDelete();
   };
@@ -19,7 +20,9 @@ function UserActionDropdown({
   return (
     <div className="flex justify-end relative" ref={isOpen ? dropdownRef : null}>
       <button
+        type="button"
         onClick={(e) => {
+          e.preventDefault();
           e.stopPropagation();
           onToggle();
         }}
@@ -38,6 +41,7 @@ function UserActionDropdown({
           
           {/* Delete Action */}
           <button
+            type="button"
             onClick={handleDelete}
             className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50/50 transition-all duration-200 group"
           >

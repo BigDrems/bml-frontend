@@ -1,7 +1,7 @@
 import  { SearchInput}  from "./SearchInput";
-import  {SpeciesCheckbox}  from './SpeciesCheckBox'
+import  {SightingCheckbox}  from './SightingCheckBox'
 
-export const SpeciesFilter = ({ speciesTypes = [], selectedSpecies, onToggleSpecies, onToggleAll, searchTerm, onSearchChange }) => {
+export const SightingFilter = ({ speciesTypes = [], selectedSpecies, onToggleSpecies, onToggleAll, searchTerm, onSearchChange }) => {
   const filteredSpecies = speciesTypes.filter(sp =>
     sp.label.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -24,7 +24,7 @@ export const SpeciesFilter = ({ speciesTypes = [], selectedSpecies, onToggleSpec
 
       <div className="space-y-2">
         {filteredSpecies.map(species => (
-          <SpeciesCheckbox
+          <SightingCheckbox
             key={species.id}
             species={species}
             checked={selectedSpecies[species.id]}

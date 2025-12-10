@@ -18,7 +18,9 @@ import LogSighting from "@/pages/LogSighting";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminUsers from "@/pages/admin/AdminUsers";
+import AdminSightings from "@/pages/admin/AdminSightings";
 import './index.css';
+import { AdminSpecies } from "./pages/admin/AdminSpecies";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +30,10 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+if (import.meta.env.PROD) {
+  console.log('App started.');
+}
 
 
 createRoot(document.getElementById("root")!).render(
@@ -54,6 +60,8 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index element={<AdminDashboard />} />
                   <Route path="users" element={<AdminUsers />} />
+                  <Route path="species" element={<AdminSpecies />} />
+                  <Route path="sightings" element={<AdminSightings />} />
                   {/* Add more admin routes here */}
                 </Route>
               </Route>

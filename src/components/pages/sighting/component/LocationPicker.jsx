@@ -4,61 +4,17 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import leyteGeoJSON from '@/data/geojson/leyte-boundary.json';
 import { toast } from 'sonner';
+import { LEYTE_CENTER, LEYTE_BOUNDS, MAP_CONFIG, DEFAULT_MARKER_ICON, GEOJSON_STYLE } from '../const';
+import { isPointInGeoJSON, formatCoordinate } from '../utils';
 
-// Fix for default marker icon
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41]
-});
-
-L.Marker.prototype.options.icon = DefaultIcon;
-
-// Leyte Bounds
-const LEYTE_BOUNDS = L.latLngBounds(
-  [9.9, 124.2], // South West
-  [11.6, 125.4] // North East
-);
-
-// Ray-casting algorithm to check if point is in polygon
-const isPointInPolygon = (lat, lng, polygon) => {
-  const x = lng, y = lat;
-  let inside = false;
-  
-  // Handle MultiPolygon and Polygon
-  const polygons = polygon.type === 'MultiPolygon' 
-    ? polygon.coordinates 
-    : [polygon.coordinates];
-
-  for (const poly of polygons) {
-    // For each polygon, the first ring is the outer boundary
-    const vs = polygon.type === 'MultiPolygon' ? poly[0] : poly[0];
-    
-    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-      const xi = vs[i][0], yi = vs[i][1];
-      const xj = vs[j][0], yj = vs[j][1];
-      
-      const intersect = ((yi > y) !== (yj > y))
-          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-      if (intersect) inside = !inside;
-    }
-    if (inside) return true; // If inside any polygon part
-  }
-  
-  return inside;
-};
+// Set default marker icon
+L.Marker.prototype.options.icon = DEFAULT_MARKER_ICON;
 
 const LocationMarker = ({ position, setPosition }) => {
   const map = useMapEvents({
     click(e) {
       // Check if point is inside Leyte GeoJSON
-      const isInside = leyteGeoJSON.features.some(feature => 
-        isPointInPolygon(e.latlng.lat, e.latlng.lng, feature.geometry)
-      );
+      const isInside = isPointInGeoJSON(e.latlng.lat, e.latlng.lng, leyteGeoJSON);
 
       if (isInside) {
         setPosition(e.latlng);
@@ -74,18 +30,8 @@ const LocationMarker = ({ position, setPosition }) => {
   );
 };
 
-export const LocationPicker = ({ position, setPosition }) => {
-  const defaultCenter = [11.0, 124.8]; // Leyte center
-
-  const geoJSONStyle = {
-    color: '#90BE54',
-    weight: 2,
-    opacity: 0.6,
-    fillColor: '#90BE54',
-    fillOpacity: 0.1,
-    dashArray: '5, 5',
-  };
-
+export const LocationPicker = ({ name = 'location' }) => {
+  const [position, setPosition] = useState(null);
   return (
     <div className="space-y-4">
       <label className="text-sm font-medium text-[#445133]">
@@ -93,23 +39,30 @@ export const LocationPicker = ({ position, setPosition }) => {
         <span className="block text-xs text-gray-500 font-normal mt-1">Drop a pin on the map or enter coordinates.</span>
       </label>
       
+      {/* Hidden input to store location data */}
+      <input 
+        type="hidden" 
+        name={name} 
+        value={position ? JSON.stringify(position) : ''} 
+      />
+      
       <div className="h-[300px] w-full rounded-xl overflow-hidden border border-gray-200 shadow-inner relative z-0">
         <MapContainer 
-          center={defaultCenter} 
-          zoom={8} 
-          scrollWheelZoom={true} 
+          center={LEYTE_CENTER} 
+          zoom={MAP_CONFIG.zoom} 
+          scrollWheelZoom={MAP_CONFIG.scrollWheelZoom} 
           className="h-full w-full"
           maxBounds={LEYTE_BOUNDS}
-          maxBoundsViscosity={1.0}
-          minZoom={8}
-          zoomControl={false} // We'll add it manually to position it
+          maxBoundsViscosity={MAP_CONFIG.maxBoundsViscosity}
+          minZoom={MAP_CONFIG.minZoom}
+          zoomControl={false}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           
-          <GeoJSON data={leyteGeoJSON} style={geoJSONStyle} />
+          <GeoJSON data={leyteGeoJSON} style={GEOJSON_STYLE} />
           
           <LocationMarker position={position} setPosition={setPosition} />
           
@@ -122,7 +75,7 @@ export const LocationPicker = ({ position, setPosition }) => {
           <label className="text-xs text-gray-500">Latitude</label>
           <input
             type="number"
-            value={position ? position.lat.toFixed(6) : ''}
+            value={formatCoordinate(position?.lat)}
             readOnly
             className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 focus:outline-none"
             placeholder="0.000000"
@@ -132,7 +85,7 @@ export const LocationPicker = ({ position, setPosition }) => {
           <label className="text-xs text-gray-500">Longitude</label>
           <input
             type="number"
-            value={position ? position.lng.toFixed(6) : ''}
+            value={formatCoordinate(position?.lng)}
             readOnly
             className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 focus:outline-none"
             placeholder="0.000000"

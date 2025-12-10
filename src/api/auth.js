@@ -16,7 +16,6 @@ export const registerUser = async (data) => {
     const response = await api.post('/auth/register', data);
     return response.data;
   } catch (error) {
-    console.error('Registration error details:', error.response?.data);
     throw error;
   }
 };
@@ -30,7 +29,6 @@ export const loginUser = async (idToken) => {
     const response = await api.post('/auth/login', { idToken });
     return response.data;
   } catch (error) {
-    console.error('Login error details:', error.response?.data);
     throw error;
   }
 };

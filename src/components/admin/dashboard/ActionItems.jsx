@@ -4,6 +4,10 @@ import { Link } from 'react-router-dom';
 function ActionItems({ pendingSightings = [], recentActivity = [] }) {
   const [activeTab, setActiveTab] = useState('pending');
 
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+
   return (
     <div className="bg-white rounded-xl p-4 md:p-6 border border-[#90BE54]/30 shadow-sm h-full">
       <h3 className="text-gray-800 text-base md:text-lg font-semibold mb-4">Action Items</h3>
@@ -11,7 +15,12 @@ function ActionItems({ pendingSightings = [], recentActivity = [] }) {
       {/* Tabs */}
       <div className="flex border-b border-gray-200 mb-4">
         <button
-          onClick={() => setActiveTab('pending')}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleTabClick('pending');
+          }}
           className={`flex-1 pb-2 text-xs md:text-sm font-medium transition-colors ${
             activeTab === 'pending'
               ? 'text-[#4F8706] border-b-2 border-[#90BE54]'
@@ -21,7 +30,12 @@ function ActionItems({ pendingSightings = [], recentActivity = [] }) {
           Pending Sighting
         </button>
         <button
-          onClick={() => setActiveTab('recent')}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleTabClick('recent');
+          }}
           className={`flex-1 pb-2 text-xs md:text-sm font-medium transition-colors ${
             activeTab === 'recent'
               ? 'text-[#4F8706] border-b-2 border-[#90BE54]'

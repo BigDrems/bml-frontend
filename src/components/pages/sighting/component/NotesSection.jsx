@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export const NotesSection = ({ value, onChange }) => {
+export const NotesSection = ({ name = 'notes' }) => {
   const maxLength = 300;
+  const [charCount, setCharCount] = useState(0);
 
   return (
     <div className="space-y-2">
@@ -10,12 +11,12 @@ export const NotesSection = ({ value, onChange }) => {
           Add Notes
         </label>
         <span className="text-xs text-gray-400">
-          {value.length}/{maxLength}
+          {charCount}/{maxLength}
         </span>
       </div>
       <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        name={name}
+        onChange={(e) => setCharCount(e.target.value.length)}
         rows={4}
         maxLength={maxLength}
         className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#90BE54] focus:border-transparent transition outline-none resize-none"

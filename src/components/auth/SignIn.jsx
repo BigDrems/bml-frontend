@@ -25,7 +25,6 @@ const SignIn = ({ onToggleMode }) => {
       
       return { success: true };
     } catch (error) {
-      console.error("Login Error", error);
       return { error: error.message || 'Failed to sign in' };
     }
   };
@@ -39,13 +38,25 @@ const SignIn = ({ onToggleMode }) => {
     >
       <form action={formAction} className="space-y-5">
         {state?.error && (
-          <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">
-            {state.error}
+          <div className="p-4 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100 flex items-start gap-3">
+            <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <div className="flex-1">
+              <p className="font-medium">Sign In Failed</p>
+              <p className="mt-1 text-red-500">{state.error}</p>
+            </div>
           </div>
         )}
         {state?.success && (
-          <div className="p-3 text-sm text-green-500 bg-green-50 rounded-lg">
-            Login successful! Redirecting...
+          <div className="p-4 text-sm text-green-600 bg-green-50 rounded-xl border border-green-100 flex items-start gap-3">
+            <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <div className="flex-1">
+              <p className="font-medium">Welcome back!</p>
+              <p className="mt-1 text-green-500">Signing you in...</p>
+            </div>
           </div>
         )}
 

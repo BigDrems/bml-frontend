@@ -1,6 +1,7 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { DatePicker } from '@/components/ui/date-picker';
+import { FiXCircle } from 'react-icons/fi';
 
 export const ObservationDateFilter = ({ startDate, endDate, onDateChange }) => {
   const handleDateChange = (type, date) => {
@@ -28,12 +29,11 @@ export const ObservationDateFilter = ({ startDate, endDate, onDateChange }) => {
       </div>
       {(startDate || endDate) && (
         <button
-          onClick={() => {
-            onDateChange('start', '');
-            onDateChange('end', '');
-          }}
-          className="text-sm text-blue-600 hover:text-blue-800 underline"
+          type="button"
+          onClick={() => onDateChange('clear')}
+          className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium shadow transition-colors duration-150"
         >
+          <FiXCircle className="w-5 h-5 text-red-500" />
           Clear Dates
         </button>
       )}

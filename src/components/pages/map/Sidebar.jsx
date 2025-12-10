@@ -19,7 +19,6 @@ export const Sidebar = ({
 }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // Destructure for easier access, providing defaults if undefined
   const {
     search = '',
     habitat = 'all',
@@ -35,6 +34,10 @@ export const Sidebar = ({
   } = uiState || {};
 
   const handleDateChange = (type, value) => {
+      if (type === 'clear') {
+      onUpdateFilter('dateRange', { start: '', end: '' });
+      return;
+    }
      onUpdateFilter('dateRange', { ...dateRange, [type]: value });
   };
 

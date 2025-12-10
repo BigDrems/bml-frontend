@@ -2,9 +2,8 @@ import React from 'react';
 import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
-import { PROTECTED_AREAS, CITIES } from '@/data/constant/location';
+import { PROTECTED_AREAS } from '@/data/constant/location';
 import { ProtectedAreaCircle } from '@/components/pages/map/ProtectedAreaCircle';
-import { CityMarker } from '@/components/pages/map/CityMarker';
 import { SightingMarker } from '@/components/pages/map/SightingMarker';
 import { MapLegend } from '@/components/pages/map/MapLegend';
 import leyteGeoJSON from '@/data/geojson/leyte-boundary.json';
@@ -49,10 +48,7 @@ export const MapView = ({ protectedAreaOpacity, showProtectedAreas, species = []
           <ProtectedAreaCircle key={idx} area={area} opacity={protectedAreaOpacity} />
         ))}
 
-        {CITIES.map((city, idx) => (
-          <CityMarker key={idx} city={city} />
-        ))}
-
+    
         {/* Clustered Species Markers */}
         <MarkerClusterGroup
           chunkedLoading

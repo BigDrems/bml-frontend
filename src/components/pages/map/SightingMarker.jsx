@@ -3,17 +3,16 @@ import { Marker, Popup } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Info, Calendar, ArrowRight } from 'lucide-react';
 import { POPUP_CONFIG, DEFAULT_FALLBACK_IMAGE } from './const';
-import { createSightingIcon, formatSightingDate, getSightingImageUrl, getUnsplashFallback, getFullLocation} from './utils';
+import { formatSightingDate, getSightingImageUrl, getUnsplashFallback, getFullLocation} from './utils';
 import { formatLocation } from '../home/utils/featuredHelpers';
+import { getIconBySpecies } from './utils/getIconBySpecies';
 
 export const SightingMarker = ({ species, sighting }) => {
-    // Helper to join location name and municipality
     
   const navigate = useNavigate();
-  const icon = createSightingIcon(species.type);
-
-  // Get the image URL from sighting media or species image
+  const icon = getIconBySpecies(species.type);
   const imageUrl = getSightingImageUrl(sighting, species);
+
 
   const handleViewDetails = () => {
     navigate(`/species/${species.id}`);

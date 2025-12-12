@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { Species, CreateSpeciesInput, UpdateSpeciesInput } from '../types/species';
-
+import { getAuthHeader } from '../utils/getheader';
 const API_URL = import.meta.env.VITE_API_URL;
 
 /**
@@ -46,7 +46,8 @@ export const createSpecies = async (data: CreateSpeciesInput): Promise<{ message
  * Update an existing species (Admin only)
  */
 export const updateSpecies = async (id: string, data: UpdateSpeciesInput): Promise<{ message: string; updated: Species }> => {
-  const response = await axios.put(`${API_URL}/species/${id}`, data);
+  const headers = await getAuthHeader();
+  const response = await axios.put(`${API_URL}/species/${id}`, data, { headers });
   return response.data;
 };
 
@@ -54,6 +55,7 @@ export const updateSpecies = async (id: string, data: UpdateSpeciesInput): Promi
  * Delete a species (Admin only)
  */
 export const deleteSpecies = async (id: string): Promise<{ message: string }> => {
-  const response = await axios.delete(`${API_URL}/species/${id}`);
+  const headers = await getAuthHeader();
+  const response = await axios.delete(`${API_URL}/species/${id}`, { headers });
   return response.data;
 };

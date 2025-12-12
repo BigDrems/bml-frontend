@@ -1,26 +1,9 @@
 import axios from 'axios';
 import { auth } from '../config/firebase';
 import { PROTECTED_AREAS } from '../data/constant/location';
-
+import { getAuthHeader } from '../utils/getheader';
 const API_URL = import.meta.env.VITE_API_URL;
 
-const getAuthHeader = async () => {
-  let token = null;
-  
-  if (auth.currentUser) {
-    try {
-      token = await auth.currentUser.getIdToken();
-    } catch (e) {
-      console.error("Failed to retrieve Firebase token:", e);
-    }
-  }
-
-  if (!token) {
-    token = localStorage.getItem('token');
-  }
-
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
 
 /**
  * Get analytics/stats for the dashboard

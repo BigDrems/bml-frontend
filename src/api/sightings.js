@@ -1,27 +1,8 @@
 import axios from 'axios';
 import { auth } from '../config/firebase';
-
+import { getAuthHeader } from '../utils/getheader';
 const API_URL = import.meta.env.VITE_API_URL;
 
-const getAuthHeader = async () => {
-  let token = null;
-  
-  // Always prefer fresh token from Firebase SDK
-  if (auth.currentUser) {
-    try {
-      token = await auth.currentUser.getIdToken();
-    } catch (e) {
-      console.error("Failed to retrieve Firebase token:", e);
-    }
-  }
-
-  // Fallback to localStorage if SDK fails or user not found (though unlikely if logged in)
-  if (!token) {
-    token = localStorage.getItem('token');
-  }
-
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
 
 /**
  * Create a new sighting
